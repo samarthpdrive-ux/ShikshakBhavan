@@ -18,7 +18,8 @@ This version is ready to deploy on Vercel with TiDB Cloud and Cloudinary.
 3. Add these environment variables in Vercel Project Settings → Environment Variables:
 
    - `DATABASE_URL` — your TiDB SQLAlchemy URL, for example `mysql+pymysql://USER:URL_ENCODED_PASSWORD@HOST:4000/DATABASE`
-   - `MYSQL_SSL_CA` — TiDB CA certificate path if your cluster requires it. For production, use a Vercel-supported certificate strategy or include the CA file securely in the deployment.
+   - `TIDB_CA_CERT` — paste the complete contents of your TiDB `ca.pem` file. This is the recommended Vercel option.
+   - `MYSQL_SSL_CA` — only for local development, using a local CA-file path.
    - `ADMIN_PASSWORD` — a new strong production password
    - `CREDENTIAL_ENCRYPTION_KEY` — the generated Fernet key
 4. Deploy. Open `/admin.html` on your Vercel website to add Cloudinary credentials and upload videos.
