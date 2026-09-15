@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="mr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>Admin · Shrimaan Shikshak Bhavan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600&family=Noto+Serif+Devanagari:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="admin.css" />
+  </head>
+  <body>
+    <main class="admin-shell">
+      <section class="login" id="login-panel">
+        <p class="eyebrow">Shrimaan Shikshak Bhavan</p>
+        <h1>Admin panel</h1>
+        <form id="login-form"><label for="password">Admin password</label><input id="password" type="password" autocomplete="current-password" required /><button type="submit">Sign in</button><p class="form-message" id="login-message"></p></form>
+      </section>
+      <section class="dashboard" id="dashboard" hidden>
+        <header class="admin-header"><div><p class="eyebrow">Shrimaan Shikshak Bhavan</p><h1>Video manager</h1></div><button class="secondary" id="logout" type="button">Log out</button></header>
+        <div class="admin-grid">
+          <section class="panel"><p class="eyebrow">Cloudinary account</p><h2>Add an account</h2><p class="help">Add the Cloudinary account details here. Your secret stays only in the local server memory and is used to create secure upload signatures. It is never stored in the browser.</p>
+            <a class="cloudinary-link" href="https://cloudinary.com/console" target="_blank" rel="noreferrer">Open Cloudinary Media Library ↗</a>
+            <form id="account-form"><label for="account-name">Account name</label><input id="account-name" required placeholder="e.g. Shikshak Bhavan" /><label for="cloud-name">Cloud name</label><input id="cloud-name" required placeholder="your-cloud-name" /><label for="api-key">API key</label><input id="api-key" type="password" required placeholder="Cloudinary API key" /><label for="api-secret">API secret</label><input id="api-secret" type="password" required placeholder="Cloudinary API secret" /><button type="submit">Save account</button><p class="form-message" id="account-message"></p></form><div class="account-list" id="account-list"></div>
+          </section>
+          <section class="panel"><p class="eyebrow">Upload lodge video</p><h2>Publish a video</h2><p class="help">Choose a saved account, select an MP4 video, and publish it directly to Cloudinary. The returned Cloudinary video URL is then added to the four-video gallery.</p>
+            <form id="video-form"><label for="video-account">Choose account</label><select id="video-account" required><option value="">Choose account</option></select><label for="video-title">Video title</label><input id="video-title" required placeholder="e.g. भवनाचे प्रवेशद्वार" /><label for="video-category">Category <small>optional</small></label><input id="video-category" placeholder="e.g. Exterior" /><label for="video-description">Video caption <small>optional</small></label><textarea id="video-description" rows="3" placeholder="A short description of the video"></textarea><label class="file-picker" for="video-file"><span>Choose MP4 video</span><input id="video-file" type="file" accept="video/mp4,video/webm,video/quicktime" required /></label><button type="submit">Upload to gallery</button><p class="form-message" id="video-message"></p></form>
+            <div class="video-list" id="video-list"></div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <script src="admin.js"></script>
+  </body>
+</html>

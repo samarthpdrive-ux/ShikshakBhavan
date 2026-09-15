@@ -1,0 +1,12 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "cleanUrls": false,
+  "functions": {
+    "api/**/*.py": {
+      "excludeFiles": "{assets/**,work/**,server.js,start-local-server.bat}"
+    }
+  },
+  "rewrites": [
+    { "source": "/api/:path*", "destination": "/api/index" }
+  ]
+}

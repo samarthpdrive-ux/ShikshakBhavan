@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Shrimaan Shikshak Bhavan" />
+    <title>Shrimaan Shikshak Bhavan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600&family=Noto+Serif+Devanagari:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main>
+      <section class="hero" id="top" aria-label="Shrimaan Shikshak Bhavan">
+        <img class="hero__image" src="assets/srimaan-shikshak-bhavan.jpg" alt="Exterior of Shrimaan Shikshak Bhavan" />
+        <div class="hero__veil"></div>
+        <header class="header">
+          <a class="brand" href="#top" aria-label="Shrimaan Shikshak Bhavan home">Shrimaan<br />Shikshak Bhavan</a>
+          <button class="menu" type="button" aria-label="Open menu" aria-expanded="false"><span></span><span></span></button>
+        </header>
+        <div class="hero__content"><h1>Shrimaan<br /><em>Shikshak Bhavan</em></h1></div>
+        <button class="explore" type="button" data-scroll-to="residence"><span class="explore__line"></span><span>Discover</span></button>
+        <p class="hero__index">01&nbsp;&nbsp;—&nbsp;&nbsp;01</p>
+      </section>
+
+      <nav class="desktop-nav" aria-label="Desktop navigation">
+        <div class="desktop-nav__main">
+          <button class="desktop-nav__menu" type="button" data-menu-trigger aria-label="Open menu"><i></i><i></i><i></i></button>
+          <a class="desktop-nav__brand" href="#top">SHRIMAAN<span>Shikshak Bhavan</span></a>
+          <a class="desktop-nav__cta" href="#enquiries">चौकशी</a>
+        </div>
+        <div class="desktop-nav__links">
+          <a href="#residence">आमचा निवास</a><a href="#spaces">सुविधा</a><a href="#gallery">छायाचित्रे</a><a href="#enquiries">चौकशी</a>
+        </div>
+      </nav>
+
+      <aside class="drawer" aria-hidden="true">
+        <div class="drawer__top"><span>Menu</span><button class="drawer__close" type="button" aria-label="Close menu">×</button></div>
+        <nav class="drawer__nav" aria-label="Main navigation">
+          <a href="#residence">The Residence <span>01</span></a>
+          <a href="#spaces">The Spaces <span>02</span></a>
+          <a href="#gallery">Gallery <span>03</span></a>
+          <a href="#enquiries">Enquiries <span>04</span></a>
+        </nav>
+        <p class="drawer__mark">Shrimaan Shikshak Bhavan</p>
+      </aside>
+
+      <section class="intro" id="residence">
+        <p class="section-label">01 / आमचा निवास</p>
+        <div class="intro__copy">
+          <h2 lang="mr">आमचा <em>निवास</em></h2>
+          <p class="intro__marathi" lang="mr">श्री स्वामी समर्थ मंदिराच्या दर्शनासाठी येणाऱ्या स्वामी भक्तांसाठी श्रीमान शिक्षक भवन हे शांत, स्वच्छ आणि आरामदायी निवासस्थान आहे. मंदिराच्या मागे, समर्थ विहार, गाणगापूर रोड, अक्कलकोट येथे सुविधाजनक ठिकाणी असलेले हे भवन भक्तांच्या मुक्कामासाठी उत्तम सोय उपलब्ध करून देते.</p>
+        </div>
+        <div class="intro__placeholders" aria-label="Reserved space for four lodge photographs">
+          <div class="intro__placeholder"><span>01</span></div>
+          <div class="intro__placeholder"><span>02</span></div>
+          <div class="intro__placeholder"><span>03</span></div>
+          <div class="intro__placeholder"><span>04</span></div>
+        </div>
+      </section>
+
+      <section class="two-photo-page" aria-label="Lodge videos">
+        <div class="two-photo-page__heading">
+          <p class="section-label">02 / व्हिडिओ झलक</p>
+          <p lang="mr">श्रीमान शिक्षक भवनाची<br />क्षणचित्रे</p>
+        </div>
+        <div class="two-photo-page__grid" id="video-gallery" aria-live="polite"></div>
+        <template id="video-card-template">
+          <article class="video-card">
+            <video playsinline preload="metadata"></video>
+            <div class="video-card__shade"></div>
+            <p class="video-card__title"></p>
+            <button class="video-card__play" type="button" aria-label="Play video">▶</button>
+            <div class="video-card__controls">
+              <button class="video-card__mute" type="button" aria-label="Mute video">⌁</button>
+              <input class="video-card__seek" type="range" min="0" max="100" value="0" aria-label="Video progress" />
+              <button class="video-card__fullscreen" type="button" aria-label="View fullscreen">⛶</button>
+            </div>
+          </article>
+        </template>
+      </section>
+
+      <section class="space-list" id="spaces">
+        <div class="section-heading"><p class="section-label">02 / The Spaces</p><p>A collection of places<br />under one roof.</p></div>
+        <a class="space-card space-card--one" href="#enquiries"><img src="assets/srimaan-shikshak-bhavan.jpg" alt="Residence exterior" loading="lazy" /><span>01</span><h3>The<br /><em>Residence</em></h3><i>View</i></a>
+        <a class="space-card space-card--two" href="#enquiries"><img src="assets/srimaan-shikshak-bhavan.jpg" alt="Residence exterior detail" loading="lazy" /><span>02</span><h3>Shared<br /><em>Moments</em></h3><i>View</i></a>
+      </section>
+
+      <section class="quote-panel">
+        <img src="assets/srimaan-shikshak-bhavan.jpg" alt="Shrimaan Shikshak Bhavan facade" loading="lazy" />
+        <div class="quote-panel__veil"></div>
+        <p class="section-label">A stay with a sense of place</p>
+        <h2>Come in.<br /><em>Settle slowly.</em></h2>
+      </section>
+
+      <section class="gallery" id="gallery">
+        <div class="gallery__heading"><p class="section-label">03 / Gallery</p><h2>Seen<br /><em>in passing.</em></h2><p>Until more photographs arrive, this is a first glimpse of the house.</p></div>
+        <div class="gallery__grid">
+          <figure class="gallery__one"><img src="assets/srimaan-shikshak-bhavan.jpg" alt="A view of the house" loading="lazy" /><figcaption>01 — A view from outside</figcaption></figure>
+          <figure class="gallery__two"><img src="assets/srimaan-shikshak-bhavan.jpg" alt="A detail of the house" loading="lazy" /><figcaption>02 — A closer look</figcaption></figure>
+          <figure class="gallery__three"><img src="assets/srimaan-shikshak-bhavan.jpg" alt="The house facade" loading="lazy" /><figcaption>03 — The facade</figcaption></figure>
+        </div>
+      </section>
+
+      <section class="enquiries" id="enquiries">
+        <p class="section-label">04 / Enquiries</p>
+        <h2>Stay in<br /><em>touch.</em></h2>
+        <a class="enquiries__link" href="mailto:hello@example.com">Begin an enquiry <span>↗</span></a>
+      </section>
+    </main>
+    <footer><a href="#top">Shrimaan Shikshak Bhavan</a><span>© <span id="year"></span></span><a href="#top">Back to top ↑</a></footer>
+    <script src="script.js"></script>
+  </body>
+</html>
