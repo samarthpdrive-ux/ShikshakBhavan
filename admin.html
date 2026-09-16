@@ -18,7 +18,7 @@
         <form id="login-form"><label for="password">Admin password</label><input id="password" type="password" autocomplete="current-password" required /><button type="submit">Sign in</button><p class="form-message" id="login-message"></p></form>
       </section>
       <section class="dashboard" id="dashboard" hidden>
-        <header class="admin-header"><div><p class="eyebrow">Shrimaan Shikshak Bhavan</p><h1>Video manager</h1></div><button class="secondary" id="logout" type="button">Log out</button></header>
+        <header class="admin-header"><div><p class="eyebrow">Shrimaan Shikshak Bhavan</p><h1>Media manager</h1></div><button class="secondary" id="logout" type="button">Log out</button></header>
         <div class="admin-grid">
           <section class="panel"><p class="eyebrow">Cloudinary account</p><h2>Add an account</h2><p class="help">Add the Cloudinary account details here. Your secret stays only in the local server memory and is used to create secure upload signatures. It is never stored in the browser.</p>
             <a class="cloudinary-link" href="https://cloudinary.com/console" target="_blank" rel="noreferrer">Open Cloudinary Media Library ↗</a>
@@ -27,6 +27,10 @@
           <section class="panel"><p class="eyebrow">Upload lodge video</p><h2>Publish a video</h2><p class="help">Choose a saved account, select an MP4 video, and publish it directly to Cloudinary. The first four videos appear on the home page; every uploaded video is available in the full video album.</p>
             <form id="video-form"><label for="video-account">Choose account</label><select id="video-account" required><option value="">Choose account</option></select><label for="video-title">Video title</label><input id="video-title" required placeholder="e.g. भवनाचे प्रवेशद्वार" /><label for="video-category">Category <small>optional</small></label><input id="video-category" placeholder="e.g. Exterior" /><label for="video-description">Video caption <small>optional</small></label><textarea id="video-description" rows="3" placeholder="A short description of the video"></textarea><label class="file-picker" for="video-file"><span>Choose MP4 video</span><input id="video-file" type="file" accept="video/mp4,video/webm,video/quicktime" required /></label><button type="submit">Upload to gallery</button><p class="form-message" id="video-message"></p></form>
             <div class="video-list" id="video-list"></div>
+          </section>
+          <section class="panel"><p class="eyebrow">Upload lodge photo</p><h2>Publish a photo</h2><p class="help">Use the same saved Cloudinary account. The first four photos appear on the home page and every uploaded photo is kept in the Photo Album.</p>
+            <form id="photo-form"><label for="photo-account">Choose account</label><select id="photo-account" required><option value="">Choose account</option></select><label for="photo-title">Photo title</label><input id="photo-title" required placeholder="e.g. निवासाचे प्रवेशद्वार" /><label for="photo-description">Photo caption <small>optional</small></label><textarea id="photo-description" rows="3" placeholder="A short description of the photo"></textarea><label class="file-picker" for="photo-file"><span>Choose photo</span><input id="photo-file" type="file" accept="image/jpeg,image/png,image/webp" required /></label><button type="submit">Upload to photo album</button><p class="form-message" id="photo-message"></p></form>
+            <div class="video-list" id="photo-list"></div>
           </section>
         </div>
       </section>

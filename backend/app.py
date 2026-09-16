@@ -32,6 +32,7 @@ class CloudinaryAccount(Base):
     api_secret_encrypted = Column(Text, nullable=False)
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
     videos = relationship('Video', back_populates='account')
+    photos = relationship('Photo', back_populates='account')
 
 class Video(Base):
     __tablename__ = 'videos'
@@ -46,6 +47,19 @@ class Video(Base):
     account_id = Column(String(36), ForeignKey('cloudinary_accounts.id'), nullable=False)
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
     account = relationship('CloudinaryAccount', back_populates='videos')
+
+class Photo(Base):
+    __tablename__ = 'photos'
+    id = Column(String(36), primary_key=True)
+    title = Column(String(200), nullable=False)
+    description = Column(Text, nullable=True)
+    secure_url = Column(Text, nullable=False)
+    public_id = Column(Text, nullable=True)
+    position = Column(Integer, nullable=False, default=0)
+    is_published = Column(Boolean, nullable=False, default=True)
+    account_id = Column(String(36), ForeignKey('cloudinary_accounts.id'), nullable=False)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+    account = relationship('CloudinaryAccount', back_populates='photos')
 
 class AccountInput(BaseModel):
     name: str = Field(min_length=1, max_length=120)
@@ -64,6 +78,13 @@ class VideoInput(BaseModel):
     secure_url: str = Field(min_length=1)
     public_id: str = Field(default='')
 
+class PhotoInput(BaseModel):
+    account_id: str
+    title: str = Field(min_length=1, max_length=200)
+    description: str = Field(default='')
+    secure_url: str = Field(min_length=1)
+    public_id: str = Field(default='')
+
 class OrderInput(BaseModel):
     ids: list[str]
 
@@ -78,6 +99,7 @@ def admin_auth(x_admin_password: str = Header(default='')):
 
 def account_view(account): return {'id': account.id, 'name': account.name, 'cloudName': account.cloud_name}
 def video_view(video): return {'id': video.id, 'title': video.title, 'category': video.category or '', 'description': video.description or '', 'url': video.secure_url, 'publicId': video.public_id or '', 'position': video.position}
+def photo_view(photo): return {'id': photo.id, 'title': photo.title, 'description': photo.description or '', 'url': photo.secure_url, 'publicId': photo.public_id or '', 'position': photo.position}
 
 app = FastAPI(title='Shrimaan Shikshak Bhavan')
 
@@ -90,6 +112,13 @@ def public_videos(limit: int | None = Query(default=None, ge=1, le=100), db: Ses
     if limit:
         query = query.limit(limit)
     return [video_view(video) for video in query.all()]
+
+@app.get('/api/photos')
+def public_photos(limit: int | None = Query(default=None, ge=1, le=100), db: Session = Depends(get_db)):
+    query = db.query(Photo).filter(Photo.is_published.is_(True)).order_by(Photo.position, Photo.created_at)
+    if limit:
+        query = query.limit(limit)
+    return [photo_view(photo) for photo in query.all()]
 
 @app.post('/api/admin/verify')
 def verify_admin(_: None = Depends(admin_auth)): return {'ok': True}
@@ -108,7 +137,7 @@ def create_account(payload: AccountInput, _: None = Depends(admin_auth), db: Ses
 def delete_account(account_id: str, _: None = Depends(admin_auth), db: Session = Depends(get_db)):
     account = db.get(CloudinaryAccount, account_id)
     if not account: raise HTTPException(404, 'Account not found.')
-    if account.videos: raise HTTPException(409, 'Remove this account’s videos before deleting it.')
+    if account.videos or account.photos: raise HTTPException(409, 'Remove this account’s photos and videos before deleting it.')
     db.delete(account); db.commit(); return {'ok': True}
 
 @app.post('/api/admin/sign')
@@ -125,17 +154,33 @@ def sign_upload(payload: SignInput, _: None = Depends(admin_auth), db: Session =
 def admin_videos(_: None = Depends(admin_auth), db: Session = Depends(get_db)):
     return [video_view(video) for video in db.query(Video).order_by(Video.position, Video.created_at).all()]
 
+@app.get('/api/admin/photos')
+def admin_photos(_: None = Depends(admin_auth), db: Session = Depends(get_db)):
+    return [photo_view(photo) for photo in db.query(Photo).order_by(Photo.position, Photo.created_at).all()]
+
 @app.post('/api/admin/videos', status_code=201)
 def create_video(payload: VideoInput, _: None = Depends(admin_auth), db: Session = Depends(get_db)):
     if not db.get(CloudinaryAccount, payload.account_id): raise HTTPException(404, 'Cloudinary account not found.')
     video = Video(id=secrets.token_hex(16), account_id=payload.account_id, title=payload.title, category=payload.category, description=payload.description, secure_url=payload.secure_url, public_id=payload.public_id, position=db.query(Video).count())
     db.add(video); db.commit(); return video_view(video)
 
+@app.post('/api/admin/photos', status_code=201)
+def create_photo(payload: PhotoInput, _: None = Depends(admin_auth), db: Session = Depends(get_db)):
+    if not db.get(CloudinaryAccount, payload.account_id): raise HTTPException(404, 'Cloudinary account not found.')
+    photo = Photo(id=secrets.token_hex(16), account_id=payload.account_id, title=payload.title, description=payload.description, secure_url=payload.secure_url, public_id=payload.public_id, position=db.query(Photo).count())
+    db.add(photo); db.commit(); return photo_view(photo)
+
 @app.delete('/api/admin/videos/{video_id}')
 def delete_video(video_id: str, _: None = Depends(admin_auth), db: Session = Depends(get_db)):
     video = db.get(Video, video_id)
     if not video: raise HTTPException(404, 'Video not found.')
     db.delete(video); db.commit(); return {'ok': True}
+
+@app.delete('/api/admin/photos/{photo_id}')
+def delete_photo(photo_id: str, _: None = Depends(admin_auth), db: Session = Depends(get_db)):
+    photo = db.get(Photo, photo_id)
+    if not photo: raise HTTPException(404, 'Photo not found.')
+    db.delete(photo); db.commit(); return {'ok': True}
 
 @app.put('/api/admin/videos/order')
 def reorder_videos(payload: OrderInput, _: None = Depends(admin_auth), db: Session = Depends(get_db)):

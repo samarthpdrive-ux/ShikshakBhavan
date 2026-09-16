@@ -5,6 +5,7 @@ const drawer = document.querySelector('.drawer');
 const closeMenu = document.querySelector('.drawer__close');
 const navLinks = document.querySelectorAll('.drawer__nav a');
 const gallery = document.getElementById('video-gallery');
+const photoGallery = document.getElementById('residence-showcase');
 const cardTemplate = document.getElementById('video-card-template');
 const modal = document.getElementById('album-modal');
 const albumGrid = document.getElementById('album-grid');
@@ -14,7 +15,16 @@ const albumLabel = document.getElementById('album-label');
 const albumImage = document.getElementById('album-image');
 const albumVideo = document.getElementById('album-video');
 const albumCaption = document.getElementById('album-caption');
+const viewerMedia = document.getElementById('album-viewer-media');
+const viewerControls = document.getElementById('viewer-controls');
+const viewerBackward = document.getElementById('viewer-backward');
+const viewerToggle = document.getElementById('viewer-toggle');
+const viewerForward = document.getElementById('viewer-forward');
+const viewerMute = document.getElementById('viewer-mute');
+const viewerZoom = document.getElementById('viewer-zoom');
 let allVideos = [];
+let allPhotos = [];
+let controlsTimer;
 
 function toggleMenu(open) {
   if (!drawer || !menu) return;
@@ -31,14 +41,14 @@ async function getVideos(limit) {
   return videos;
 }
 
-function photoItems() {
-  return [...document.querySelectorAll('.photo-card')].map((card, index) => ({
-    type: 'photo',
-    src: card.dataset.photoSrc || '',
-    title: card.dataset.photoTitle || `छायाचित्र ${String(index + 1).padStart(2, '0')}`,
-    empty: !card.dataset.photoSrc,
-  }));
+async function getPhotos(limit) {
+  const response = await fetch(limit ? `/api/photos?limit=${limit}` : '/api/photos');
+  const photos = await response.json();
+  if (!response.ok) throw new Error('Unable to load photos');
+  return photos;
 }
+
+function photoItems() { return allPhotos.map((photo) => ({ ...photo, type: 'photo', src: photo.url })); }
 
 function showModal() {
   modal.hidden = false;
@@ -55,6 +65,13 @@ function closeModal() {
   if (!drawer?.classList.contains('is-open')) document.body.style.overflow = '';
 }
 
+function showViewerControls() {
+  if (albumVideo.hidden) return;
+  viewerControls.classList.add('is-visible');
+  clearTimeout(controlsTimer);
+  controlsTimer = setTimeout(() => viewerControls.classList.remove('is-visible'), 2600);
+}
+
 function openViewer(item) {
   showModal();
   albumGrid.hidden = true;
@@ -66,11 +83,15 @@ function openViewer(item) {
     albumVideo.hidden = false;
     albumVideo.src = item.url;
     albumVideo.load();
+    viewerControls.hidden = false;
+    viewerToggle.textContent = '▶';
+    showViewerControls();
   } else {
     albumVideo.pause();
     albumVideo.removeAttribute('src');
     albumImage.hidden = false;
     albumVideo.hidden = true;
+    viewerControls.hidden = true;
     albumImage.src = item.src;
     albumImage.alt = item.title;
   }
@@ -100,7 +121,10 @@ async function openAlbum(kind) {
   albumLabel.textContent = kind === 'photo' ? '01 / फोटो अल्बम' : '02 / व्हिडिओ अल्बम';
   albumTitle.textContent = kind === 'photo' ? 'छायाचित्रांचा संग्रह' : 'व्हिडिओ संग्रह';
   if (kind === 'photo') {
-    photoItems().forEach(addAlbumEntry);
+    try { allPhotos = await getPhotos(); } catch { allPhotos = []; }
+    const photos = photoItems();
+    if (!photos.length) photos.push({ type: 'photo', src: 'assets/srimaan-shikshak-bhavan.jpg', title: 'श्रीमान शिक्षक भवन' });
+    photos.forEach(addAlbumEntry);
     return;
   }
   try {
@@ -110,6 +134,35 @@ async function openAlbum(kind) {
   } catch {
     addAlbumEntry({ empty: true, title: 'व्हिडिओ उपलब्ध नाही', type: 'video' });
   }
+}
+
+function previewPhotoCard(item, index) {
+  const card = document.createElement('article');
+  card.className = 'photo-card photo-card--featured';
+  card.tabIndex = 0;
+  card.setAttribute('role', 'button');
+  card.innerHTML = `<div class="photo-card__media"><img src="${item.src}" alt="${item.title}" loading="lazy" /></div><div class="photo-card__overlay"><span>${String(index + 1).padStart(2, '0')}</span><p>${item.title}</p><i>↗</i></div>`;
+  const open = () => openViewer(item);
+  card.onclick = open;
+  card.onkeydown = (event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); open(); } };
+  return card;
+}
+
+function photoPlaceholder(index) {
+  const card = document.createElement('article');
+  card.className = 'photo-card photo-card--empty';
+  card.innerHTML = `<span>${String(index + 1).padStart(2, '0')}</span><p>छायाचित्र लवकरच</p><i>◇</i>`;
+  return card;
+}
+
+async function renderPhotos() {
+  if (!photoGallery) return;
+  try { allPhotos = await getPhotos(4); } catch { allPhotos = []; }
+  const previews = photoItems();
+  if (!previews.length) previews.push({ type: 'photo', src: 'assets/srimaan-shikshak-bhavan.jpg', title: 'श्रीमान शिक्षक भवन' });
+  photoGallery.innerHTML = '';
+  previews.forEach((photo, index) => photoGallery.append(previewPhotoCard(photo, index)));
+  for (let index = previews.length; index < 4; index += 1) photoGallery.append(photoPlaceholder(index));
 }
 
 function placeholder(index) {
@@ -163,6 +216,15 @@ document.querySelectorAll('[data-photo-src]').forEach((card) => {
 document.querySelectorAll('[data-open-album]').forEach((button) => { button.onclick = () => openAlbum(button.dataset.openAlbum); });
 document.querySelectorAll('[data-close-album]').forEach((button) => { button.onclick = closeModal; });
 document.getElementById('album-back').onclick = () => { albumVideo.pause(); albumViewer.hidden = true; albumGrid.hidden = false; };
+viewerMedia.onpointermove = showViewerControls;
+viewerMedia.onclick = (event) => { if (event.target === viewerMedia || event.target === albumVideo) showViewerControls(); };
+viewerBackward.onclick = () => { albumVideo.currentTime = Math.max(0, albumVideo.currentTime - 15); showViewerControls(); };
+viewerForward.onclick = () => { albumVideo.currentTime = Math.min(albumVideo.duration || Infinity, albumVideo.currentTime + 15); showViewerControls(); };
+viewerToggle.onclick = () => { if (albumVideo.paused) albumVideo.play().catch(() => {}); else albumVideo.pause(); showViewerControls(); };
+viewerMute.onclick = () => { albumVideo.muted = !albumVideo.muted; viewerMute.textContent = albumVideo.muted ? '⌁' : '◖))'; showViewerControls(); };
+viewerZoom.onclick = () => { if (document.fullscreenElement) document.exitFullscreen?.(); else viewerMedia.requestFullscreen?.(); showViewerControls(); };
+albumVideo.onplay = () => { viewerToggle.textContent = 'Ⅱ'; showViewerControls(); };
+albumVideo.onpause = () => { viewerToggle.textContent = '▶'; showViewerControls(); };
 document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && !modal.hidden) closeModal(); });
 if (explore) explore.onclick = () => document.getElementById(explore.dataset.scrollTo)?.scrollIntoView({ behavior: 'smooth' });
 if (menu) menu.onclick = () => toggleMenu(!drawer.classList.contains('is-open'));
@@ -172,3 +234,4 @@ navLinks.forEach((link) => { link.onclick = () => toggleMenu(false); });
 const year = document.getElementById('year');
 if (year) year.textContent = new Date().getFullYear();
 renderVideos();
+renderPhotos();
