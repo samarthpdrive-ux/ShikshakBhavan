@@ -6,8 +6,6 @@ from dotenv import load_dotenv
 load_dotenv(Path(__file__).with_name('.env'))
 
 DATABASE_URL = os.getenv('DATABASE_URL', '')
-MYSQL_SSL_CA = os.getenv('MYSQL_SSL_CA', '')
-TIDB_CA_CERT = os.getenv('TIDB_CA_CERT', '')
 ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD', '')
 CREDENTIAL_ENCRYPTION_KEY = os.getenv('CREDENTIAL_ENCRYPTION_KEY', '')
 

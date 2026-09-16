@@ -1,8 +1,5 @@
 import hashlib
-import os
-import hmac
 import secrets
-import tempfile
 import time
 from pathlib import Path
 
@@ -14,14 +11,13 @@ from pydantic import BaseModel, Field
 from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String, Text, create_engine, func
 from sqlalchemy.orm import Session, declarative_base, relationship, sessionmaker
 
-from .config import ADMIN_PASSWORD, CREDENTIAL_ENCRYPTION_KEY, DATABASE_URL, MYSQL_SSL_CA, TIDB_CA_CERT
+from .config import ADMIN_PASSWORD, CREDENTIAL_ENCRYPTION_KEY, DATABASE_URL
 
 static_dir = Path(__file__).resolve().parent.parent
-ca_path = MYSQL_SSL_CA
-if TIDB_CA_CERT:
-    ca_path = os.path.join(tempfile.gettempdir(), 'tidb-ca.pem')
-    Path(ca_path).write_text(TIDB_CA_CERT.replace('\\n', '\n'))
-connect_args = {'ssl_ca': ca_path, 'ssl_verify_cert': True, 'ssl_verify_identity': True} if ca_path else {}
+ca_path = Path(__file__).with_name('ca.pem')
+if not ca_path.is_file():
+    raise RuntimeError('Missing backend/ca.pem. Download the TiDB CA certificate and place it there before deploying.')
+connect_args = {'ssl_ca': str(ca_path), 'ssl_verify_cert': True, 'ssl_verify_identity': True}
 engine = create_engine(DATABASE_URL, pool_pre_ping=True, pool_recycle=3600, connect_args=connect_args)
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False, expire_on_commit=False)
 Base = declarative_base()

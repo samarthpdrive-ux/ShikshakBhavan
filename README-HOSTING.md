@@ -9,7 +9,8 @@ This version is ready to deploy on Vercel with TiDB Cloud and Cloudinary.
 
    `python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"`
 
-3. Push this `srimaan-shikshak-bhavan` folder to a private GitHub repository.
+3. Download TiDB's CA certificate and save it as `backend/ca.pem`. Commit this file with the project; it is a public certificate, not a secret.
+4. Push this `srimaan-shikshak-bhavan` folder to a private GitHub repository.
 
 ## Deploy on Vercel
 
@@ -18,8 +19,6 @@ This version is ready to deploy on Vercel with TiDB Cloud and Cloudinary.
 3. Add these environment variables in Vercel Project Settings → Environment Variables:
 
    - `DATABASE_URL` — your TiDB SQLAlchemy URL, for example `mysql+pymysql://USER:URL_ENCODED_PASSWORD@HOST:4000/DATABASE`
-   - `TIDB_CA_CERT` — paste the complete contents of your TiDB `ca.pem` file. This is the recommended Vercel option.
-   - `MYSQL_SSL_CA` — only for local development, using a local CA-file path.
    - `ADMIN_PASSWORD` — a new strong production password
    - `CREDENTIAL_ENCRYPTION_KEY` — the generated Fernet key
 4. Deploy. Open `/admin.html` on your Vercel website to add Cloudinary credentials and upload videos.
