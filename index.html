@@ -8,22 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600&family=Noto+Serif+Devanagari:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css?v=20260917-media-paging" />
-    <style>
-      /* Kept inline so the desktop navigation cannot be affected by local browser CSS caching. */
-      @media (min-width: 601px) {
-        .desktop-nav { background:#fbfaf7 !important; color:#161714 !important; display:block !important; position:sticky !important; top:0; z-index:100 !important; }
-        .desktop-nav__main { align-items:center !important; border-bottom:1px solid #e0dfda !important; display:grid !important; grid-template-columns:1fr auto 1fr !important; height:82px !important; padding:0 12px !important; }
-        .desktop-nav__menu { background:transparent !important; border:0 !important; cursor:pointer; display:grid !important; gap:8px; height:58px; padding:0 10px; place-content:center; width:58px; }
-        .desktop-nav__menu i { background:#161714; display:block; height:1px; width:28px; }
-        .desktop-nav__brand { font:26px/.82 Manrope,Arial,sans-serif; letter-spacing:.02em; text-align:center; text-decoration:none; }
-        .desktop-nav__brand span { display:block; font:14px/1.15 "Playfair Display",Georgia,serif; letter-spacing:0; margin-top:5px; }
-        .desktop-nav__cta { align-items:center; background:#3d668d; color:#fff; display:flex; font:12px "DM Mono",monospace; height:58px; justify-content:center; justify-self:end; letter-spacing:.08em; text-decoration:none; text-transform:uppercase; width:145px; }
-        .desktop-nav__links { align-items:center; display:flex; gap:clamp(30px,4vw,78px); height:55px; justify-content:center; }
-        .desktop-nav__links a { font:17px "Playfair Display",Georgia,serif; text-decoration:none; }
-      }
-      @media (max-width: 600px) { .desktop-nav { display:none !important; } }
-    </style>
+    <link rel="stylesheet" href="styles.css?v=20260917-lightbox-1" />
   </head>
   <body>
     <main>
@@ -70,13 +55,12 @@
         <div class="residence-showcase" id="residence-showcase" aria-label="Shrimaan Shikshak Bhavan photograph gallery">
           <article class="photo-card photo-card--featured" role="button" tabindex="0" data-photo-src="assets/srimaan-shikshak-bhavan.jpg" data-photo-title="श्रीमान शिक्षक भवन">
             <div class="photo-card__media"><img src="assets/srimaan-shikshak-bhavan.jpg" alt="Shrimaan Shikshak Bhavan exterior" loading="lazy" /></div>
-            <div class="photo-card__overlay"><span>01</span><p>श्रीमान शिक्षक भवन</p><i>↗</i></div>
+            <div class="photo-card__overlay"><span>01</span><p>श्रीमान शिक्षक भवन</p><i>⤢</i></div>
           </article>
           <article class="photo-card photo-card--empty" aria-label="Photograph space 02"><span>02</span><p>छायाचित्र लवकरच</p><i>◇</i></article>
           <article class="photo-card photo-card--empty" aria-label="Photograph space 03"><span>03</span><p>छायाचित्र लवकरच</p><i>◇</i></article>
           <article class="photo-card photo-card--empty" aria-label="Photograph space 04"><span>04</span><p>छायाचित्र लवकरच</p><i>◇</i></article>
         </div>
-        <nav class="grid-pager" aria-label="Photo pages"><button type="button" id="photo-previous" disabled>← मागील</button><span id="photo-page">01 / 01</span><button type="button" id="photo-next">पुढील →</button></nav>
       </section>
 
       <section class="two-photo-page" aria-label="Lodge videos">
@@ -85,19 +69,13 @@
           <p lang="mr">श्रीमान शिक्षक भवनाची<br />क्षणचित्रे</p>
         </div>
         <div class="two-photo-page__grid" id="video-gallery" aria-live="polite"></div>
-        <nav class="grid-pager" aria-label="Video pages"><button type="button" id="video-previous" disabled>← मागील</button><span id="video-page">01 / 01</span><button type="button" id="video-next">पुढील →</button></nav>
         <template id="video-card-template">
-          <article class="video-card">
-            <video playsinline preload="metadata"></video>
+          <article class="video-card" role="button" tabindex="0">
+            <video playsinline preload="metadata" muted loop tabindex="-1"></video>
             <div class="video-card__shade"></div>
+            <span class="video-card__play" aria-hidden="true">▶</span>
             <span class="video-card__number"></span>
             <p class="video-card__title"></p>
-            <button class="video-card__play" type="button" aria-label="Play video">▶</button>
-            <div class="video-card__controls">
-              <button class="video-card__mute" type="button" aria-label="Mute video">⌁</button>
-              <input class="video-card__seek" type="range" min="0" max="100" value="0" aria-label="Video progress" />
-              <button class="video-card__fullscreen" type="button" aria-label="View fullscreen">⛶</button>
-            </div>
           </article>
         </template>
       </section>
@@ -130,17 +108,29 @@
         <a class="enquiries__link" href="mailto:hello@example.com">Begin an enquiry <span>↗</span></a>
       </section>
     </main>
-    <div class="album-modal" id="album-modal" hidden aria-hidden="true" role="dialog" aria-modal="true" aria-label="Media viewer">
-      <div class="album-modal__backdrop" data-close-album></div>
-      <section class="album-modal__panel">
-        <button type="button" class="album-modal__close" data-close-album aria-label="Close viewer">×</button>
-        <div class="album-viewer" id="album-viewer">
-          <div class="album-viewer__media" id="album-viewer-media"><img id="album-image" alt="" /><video id="album-video" playsinline></video><div class="viewer-controls" id="viewer-controls"><button type="button" id="viewer-backward" aria-label="Go back 15 seconds">↶<small>15</small></button><button type="button" id="viewer-toggle" aria-label="Play or pause video">▶</button><button type="button" id="viewer-forward" aria-label="Go forward 15 seconds"><small>15</small>↷</button><button type="button" id="viewer-mute" aria-label="Mute video">⌁</button><button type="button" id="viewer-zoom" aria-label="View video fullscreen">⛶</button></div></div>
-          <p id="album-caption"></p>
-        </div>
-      </section>
-    </div>
     <footer><a href="#top">Shrimaan Shikshak Bhavan</a><span>© <span id="year"></span></span><a href="#top">Back to top ↑</a></footer>
-    <script src="script.js?v=20260917-media-paging"></script>
+
+    <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Media viewer">
+      <div class="lightbox__backdrop" data-lightbox-close></div>
+      <button class="lightbox__close" type="button" data-lightbox-close aria-label="Close">×</button>
+      <button class="lightbox__nav lightbox__nav--prev" type="button" data-lightbox-prev aria-label="Previous">‹</button>
+      <button class="lightbox__nav lightbox__nav--next" type="button" data-lightbox-next aria-label="Next">›</button>
+      <div class="lightbox__stage" data-lightbox-stage>
+        <img class="lightbox__image" alt="" />
+        <video class="lightbox__video" playsinline></video>
+      </div>
+      <div class="lightbox__videobar" data-lightbox-videobar hidden>
+        <button type="button" class="lightbox__vbtn" data-lightbox-playpause aria-label="Play or pause">▶</button>
+        <input type="range" class="lightbox__seek" data-lightbox-seek min="0" max="100" value="0" aria-label="Seek" />
+        <button type="button" class="lightbox__vbtn" data-lightbox-mute aria-label="Mute or unmute">⌁</button>
+        <button type="button" class="lightbox__vbtn" data-lightbox-fullscreen aria-label="Toggle fullscreen">⤢</button>
+      </div>
+      <div class="lightbox__meta">
+        <p class="lightbox__title" data-lightbox-title></p>
+        <span class="lightbox__count" data-lightbox-count></span>
+      </div>
+    </div>
+
+    <script src="script.js?v=20260917-lightbox-1"></script>
   </body>
 </html>
