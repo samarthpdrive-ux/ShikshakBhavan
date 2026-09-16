@@ -5,8 +5,5 @@
     "api/**/*.py": {
       "excludeFiles": "{assets/**,work/**,server.js,start-local-server.bat}"
     }
-  },
-  "rewrites": [
-    { "source": "/api/:path*", "destination": "/api/index" }
-  ]
+  }
 }

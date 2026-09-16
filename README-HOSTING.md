@@ -18,7 +18,7 @@ This version is ready to deploy on Vercel with TiDB Cloud and Cloudinary.
 2. Keep the project root as this `srimaan-shikshak-bhavan` folder. Vercel detects the Python function in `api/index.py`.
 3. Add these environment variables in Vercel Project Settings → Environment Variables:
 
-   - `DATABASE_URL` — your TiDB SQLAlchemy URL, for example `mysql+pymysql://USER:URL_ENCODED_PASSWORD@HOST:4000/DATABASE`
+   - `DATABASE_URL` — your TiDB SQLAlchemy URL, for example `mysql+pymysql://USER:URL_ENCODED_PASSWORD@HOST:4000/test`. Use `test` or a database you created for this website. Do **not** use the protected `sys` database.
    - `ADMIN_PASSWORD` — a new strong production password
    - `CREDENTIAL_ENCRYPTION_KEY` — the generated Fernet key
 4. Deploy. Open `/admin.html` on your Vercel website to add Cloudinary credentials and upload videos.
