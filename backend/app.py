@@ -107,15 +107,19 @@ app = FastAPI(title='Shrimaan Shikshak Bhavan')
 def create_tables(): Base.metadata.create_all(engine)
 
 @app.get('/api/videos')
-def public_videos(limit: int | None = Query(default=None, ge=1, le=100), db: Session = Depends(get_db)):
+def public_videos(limit: int | None = Query(default=None, ge=1, le=100), offset: int = Query(default=0, ge=0), db: Session = Depends(get_db)):
     query = db.query(Video).filter(Video.is_published.is_(True)).order_by(Video.position, Video.created_at)
+    if offset:
+        query = query.offset(offset)
     if limit:
         query = query.limit(limit)
     return [video_view(video) for video in query.all()]
 
 @app.get('/api/photos')
-def public_photos(limit: int | None = Query(default=None, ge=1, le=100), db: Session = Depends(get_db)):
+def public_photos(limit: int | None = Query(default=None, ge=1, le=100), offset: int = Query(default=0, ge=0), db: Session = Depends(get_db)):
     query = db.query(Photo).filter(Photo.is_published.is_(True)).order_by(Photo.position, Photo.created_at)
+    if offset:
+        query = query.offset(offset)
     if limit:
         query = query.limit(limit)
     return [photo_view(photo) for photo in query.all()]

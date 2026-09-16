@@ -1,29 +1,37 @@
-const explore = document.querySelector('[data-scroll-to]');
-const menu = document.querySelector('.menu');
-const desktopMenu = document.querySelector('[data-menu-trigger]');
-const drawer = document.querySelector('.drawer');
-const closeMenu = document.querySelector('.drawer__close');
+const PAGE_SIZE = 4;
+
+const $ = (selector, parent = document) => parent.querySelector(selector);
+const explore = $('[data-scroll-to]');
+const menu = $('.menu');
+const desktopMenu = $('[data-menu-trigger]');
+const drawer = $('.drawer');
+const closeMenu = $('.drawer__close');
 const navLinks = document.querySelectorAll('.drawer__nav a');
-const gallery = document.getElementById('video-gallery');
-const photoGallery = document.getElementById('residence-showcase');
-const cardTemplate = document.getElementById('video-card-template');
-const modal = document.getElementById('album-modal');
-const albumGrid = document.getElementById('album-grid');
-const albumViewer = document.getElementById('album-viewer');
-const albumTitle = document.getElementById('album-title');
-const albumLabel = document.getElementById('album-label');
-const albumImage = document.getElementById('album-image');
-const albumVideo = document.getElementById('album-video');
-const albumCaption = document.getElementById('album-caption');
-const viewerMedia = document.getElementById('album-viewer-media');
-const viewerControls = document.getElementById('viewer-controls');
-const viewerBackward = document.getElementById('viewer-backward');
-const viewerToggle = document.getElementById('viewer-toggle');
-const viewerForward = document.getElementById('viewer-forward');
-const viewerMute = document.getElementById('viewer-mute');
-const viewerZoom = document.getElementById('viewer-zoom');
-let allVideos = [];
-let allPhotos = [];
+const photoGallery = $('#residence-showcase');
+const videoGallery = $('#video-gallery');
+const videoTemplate = $('#video-card-template');
+const modal = $('#album-modal');
+const viewerMedia = $('#album-viewer-media');
+const albumImage = $('#album-image');
+const albumVideo = $('#album-video');
+const albumCaption = $('#album-caption');
+const viewerControls = $('#viewer-controls');
+const viewerBackward = $('#viewer-backward');
+const viewerToggle = $('#viewer-toggle');
+const viewerForward = $('#viewer-forward');
+const viewerMute = $('#viewer-mute');
+const viewerZoom = $('#viewer-zoom');
+const photoPrevious = $('#photo-previous');
+const photoNext = $('#photo-next');
+const photoPage = $('#photo-page');
+const videoPrevious = $('#video-previous');
+const videoNext = $('#video-next');
+const videoPage = $('#video-page');
+
+const pager = {
+  photo: { offset: 0, hasNext: false },
+  video: { offset: 0, hasNext: false },
+};
 let controlsTimer;
 
 function toggleMenu(open) {
@@ -34,29 +42,52 @@ function toggleMenu(open) {
   document.body.style.overflow = open ? 'hidden' : '';
 }
 
-async function getVideos(limit) {
-  const response = await fetch(limit ? `/api/videos?limit=${limit}` : '/api/videos');
-  const videos = await response.json();
-  if (!response.ok) throw new Error('Unable to load videos');
-  return videos;
+async function fetchMedia(type, offset) {
+  const response = await fetch(`/api/${type}s?offset=${offset}&limit=${PAGE_SIZE + 1}`);
+  const items = await response.json();
+  if (!response.ok) throw new Error(`Unable to load ${type}s`);
+  return { items: items.slice(0, PAGE_SIZE), hasNext: items.length > PAGE_SIZE };
 }
 
-async function getPhotos(limit) {
-  const response = await fetch(limit ? `/api/photos?limit=${limit}` : '/api/photos');
-  const photos = await response.json();
-  if (!response.ok) throw new Error('Unable to load photos');
-  return photos;
+function emptyPhoto(index) {
+  const card = document.createElement('article');
+  card.className = 'photo-card photo-card--empty';
+  card.innerHTML = `<span>${String(index + 1).padStart(2, '0')}</span><p>छायाचित्र लवकरच</p><i>◇</i>`;
+  return card;
 }
 
-function photoItems() { return allPhotos.map((photo) => ({ ...photo, type: 'photo', src: photo.url })); }
+function photoCard(item, index) {
+  const card = document.createElement('article');
+  card.className = 'photo-card photo-card--featured';
+  card.innerHTML = `<div class="photo-card__media"><img src="${item.url}" alt="${item.title}" loading="lazy" /></div><div class="photo-card__overlay"><span>${String(index + 1).padStart(2, '0')}</span><p>${item.title}</p></div>`;
+  return card;
+}
 
-function showModal() {
+function emptyVideo(index) {
+  const card = document.createElement('article');
+  card.className = 'video-card video-card--empty';
+  card.innerHTML = `<span class="video-card__number">${String(index + 1).padStart(2, '0')}</span><p>व्हिडिओ लवकरच</p>`;
+  return card;
+}
+
+function openViewer(item) {
   modal.hidden = false;
   modal.setAttribute('aria-hidden', 'false');
   document.body.style.overflow = 'hidden';
+  albumImage.hidden = true;
+  albumVideo.hidden = false;
+  albumVideo.controls = false;
+  albumVideo.removeAttribute('controls');
+  albumVideo.src = item.url;
+  albumVideo.load();
+  albumCaption.textContent = item.title || 'श्रीमान शिक्षक भवन';
+  viewerControls.hidden = false;
+  viewerToggle.textContent = '▶';
+  showViewerControls();
 }
 
-function closeModal() {
+function closeViewer() {
+  clearTimeout(controlsTimer);
   albumVideo.pause();
   albumVideo.removeAttribute('src');
   albumVideo.load();
@@ -66,161 +97,89 @@ function closeModal() {
 }
 
 function showViewerControls() {
-  if (albumVideo.hidden) return;
+  if (modal.hidden || albumVideo.hidden) return;
   viewerControls.classList.add('is-visible');
   clearTimeout(controlsTimer);
   controlsTimer = setTimeout(() => viewerControls.classList.remove('is-visible'), 2600);
 }
 
-function openViewer(item) {
-  showModal();
-  albumGrid.hidden = true;
-  albumViewer.hidden = false;
-  albumCaption.textContent = item.title;
-  if (item.type === 'video') {
-    albumImage.hidden = true;
-    albumImage.removeAttribute('src');
-    albumVideo.hidden = false;
-    albumVideo.src = item.url;
-    albumVideo.load();
-    viewerControls.hidden = false;
-    viewerToggle.textContent = '▶';
-    showViewerControls();
-  } else {
-    albumVideo.pause();
-    albumVideo.removeAttribute('src');
-    albumImage.hidden = false;
-    albumVideo.hidden = true;
-    viewerControls.hidden = true;
-    albumImage.src = item.src;
-    albumImage.alt = item.title;
-  }
-}
-
-function addAlbumEntry(item) {
-  const entry = document.createElement('button');
-  entry.type = 'button';
-  entry.className = `album-entry${item.empty ? ' album-entry--empty' : ''}`;
-  if (item.empty) {
-    entry.disabled = true;
-    entry.innerHTML = `<span>${item.title} — लवकरच</span>`;
-  } else if (item.type === 'video') {
-    entry.innerHTML = `<video muted preload="metadata" playsinline src="${item.url}"></video><span>${item.title}</span>`;
-  } else {
-    entry.innerHTML = `<img src="${item.src}" alt="${item.title}" loading="lazy" /><span>${item.title}</span>`;
-  }
-  if (!item.empty) entry.onclick = () => openViewer(item);
-  albumGrid.append(entry);
-}
-
-async function openAlbum(kind) {
-  showModal();
-  albumViewer.hidden = true;
-  albumGrid.hidden = false;
-  albumGrid.innerHTML = '';
-  albumLabel.textContent = kind === 'photo' ? '01 / फोटो अल्बम' : '02 / व्हिडिओ अल्बम';
-  albumTitle.textContent = kind === 'photo' ? 'छायाचित्रांचा संग्रह' : 'व्हिडिओ संग्रह';
-  if (kind === 'photo') {
-    try { allPhotos = await getPhotos(); } catch { allPhotos = []; }
-    const photos = photoItems();
-    if (!photos.length) photos.push({ type: 'photo', src: 'assets/srimaan-shikshak-bhavan.jpg', title: 'श्रीमान शिक्षक भवन' });
-    photos.forEach(addAlbumEntry);
-    return;
-  }
-  try {
-    allVideos = await getVideos();
-    if (!allVideos.length) addAlbumEntry({ empty: true, title: 'व्हिडिओ', type: 'video' });
-    allVideos.forEach((video, index) => addAlbumEntry({ ...video, type: 'video', title: video.title || `व्हिडिओ ${index + 1}` }));
-  } catch {
-    addAlbumEntry({ empty: true, title: 'व्हिडिओ उपलब्ध नाही', type: 'video' });
-  }
-}
-
-function previewPhotoCard(item, index) {
-  const card = document.createElement('article');
-  card.className = 'photo-card photo-card--featured';
-  card.tabIndex = 0;
-  card.setAttribute('role', 'button');
-  card.innerHTML = `<div class="photo-card__media"><img src="${item.src}" alt="${item.title}" loading="lazy" /></div><div class="photo-card__overlay"><span>${String(index + 1).padStart(2, '0')}</span><p>${item.title}</p><i>↗</i></div>`;
-  const open = () => openViewer(item);
-  card.onclick = open;
-  card.onkeydown = (event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); open(); } };
-  return card;
-}
-
-function photoPlaceholder(index) {
-  const card = document.createElement('article');
-  card.className = 'photo-card photo-card--empty';
-  card.innerHTML = `<span>${String(index + 1).padStart(2, '0')}</span><p>छायाचित्र लवकरच</p><i>◇</i>`;
-  return card;
-}
-
-async function renderPhotos() {
-  if (!photoGallery) return;
-  try { allPhotos = await getPhotos(4); } catch { allPhotos = []; }
-  const previews = photoItems();
-  if (!previews.length) previews.push({ type: 'photo', src: 'assets/srimaan-shikshak-bhavan.jpg', title: 'श्रीमान शिक्षक भवन' });
-  photoGallery.innerHTML = '';
-  previews.forEach((photo, index) => photoGallery.append(previewPhotoCard(photo, index)));
-  for (let index = previews.length; index < 4; index += 1) photoGallery.append(photoPlaceholder(index));
-}
-
-function placeholder(index) {
-  const card = document.createElement('article');
-  card.className = 'video-card video-card--empty';
-  card.innerHTML = `<span class="video-card__number">${String(index + 1).padStart(2, '0')}</span><p>व्हिडिओ लवकरच</p>`;
-  return card;
-}
-
 function videoCard(item, index) {
-  const card = cardTemplate.content.firstElementChild.cloneNode(true);
-  const video = card.querySelector('video');
-  const number = card.querySelector('.video-card__number');
-  const title = card.querySelector('.video-card__title');
-  const play = card.querySelector('.video-card__play');
-  const mute = card.querySelector('.video-card__mute');
-  const seek = card.querySelector('.video-card__seek');
-  const fullscreen = card.querySelector('.video-card__fullscreen');
+  const card = videoTemplate.content.firstElementChild.cloneNode(true);
+  const video = $('.video-card video', card);
+  const number = $('.video-card__number', card);
+  const title = $('.video-card__title', card);
+  const play = $('.video-card__play', card);
+  const fullscreen = $('.video-card__fullscreen', card);
   video.src = item.url;
   video.controls = false;
   video.removeAttribute('controls');
   video.muted = true;
+  video.preload = 'metadata';
   number.textContent = String(index + 1).padStart(2, '0');
   title.textContent = item.title || `व्हिडिओ ${index + 1}`;
-  const openVideo = () => openViewer({ ...item, type: 'video', title: item.title || `व्हिडिओ ${index + 1}` });
-  card.onclick = openVideo;
-  play.onclick = openVideo;
-  video.onclick = openVideo;
-  video.onplay = () => { play.textContent = 'Ⅱ'; };
-  video.onpause = () => { play.textContent = '▶'; };
-  video.ontimeupdate = () => { seek.value = video.duration ? (video.currentTime / video.duration) * 100 : 0; };
-  seek.oninput = () => { if (video.duration) video.currentTime = (seek.value * video.duration) / 100; };
-  mute.onclick = () => { video.muted = !video.muted; mute.textContent = video.muted ? '⌁' : '◖))'; };
-  fullscreen.onclick = (event) => { event.stopPropagation(); openVideo(); };
+  const open = () => openViewer(item);
+  card.onclick = open;
+  play.onclick = (event) => { event.stopPropagation(); open(); };
+  video.onclick = (event) => { event.stopPropagation(); open(); };
+  fullscreen.onclick = (event) => { event.stopPropagation(); open(); };
   return card;
 }
 
-async function renderVideos() {
-  if (!gallery) return;
-  try {
-    const videos = await getVideos(4);
-    gallery.innerHTML = '';
-    videos.forEach((video, index) => gallery.append(videoCard(video, index)));
-    for (let index = videos.length; index < 4; index += 1) gallery.append(placeholder(index));
-  } catch {
-    gallery.innerHTML = '';
-    for (let index = 0; index < 4; index += 1) gallery.append(placeholder(index));
-  }
+function updatePager(type) {
+  const state = pager[type];
+  const pageNumber = Math.floor(state.offset / PAGE_SIZE) + 1;
+  const previous = type === 'photo' ? photoPrevious : videoPrevious;
+  const next = type === 'photo' ? photoNext : videoNext;
+  const label = type === 'photo' ? photoPage : videoPage;
+  previous.disabled = state.offset === 0;
+  next.disabled = !state.hasNext;
+  label.textContent = `${String(pageNumber).padStart(2, '0')} / ${state.hasNext ? '…' : String(pageNumber).padStart(2, '0')}`;
 }
 
-document.querySelectorAll('[data-photo-src]').forEach((card) => {
-  const openPhoto = () => openViewer({ type: 'photo', src: card.dataset.photoSrc, title: card.dataset.photoTitle || 'छायाचित्र' });
-  card.onclick = openPhoto;
-  card.onkeydown = (event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openPhoto(); } };
-});
-document.querySelectorAll('[data-open-album]').forEach((button) => { button.onclick = () => openAlbum(button.dataset.openAlbum); });
-document.querySelectorAll('[data-close-album]').forEach((button) => { button.onclick = closeModal; });
-document.getElementById('album-back').onclick = () => { albumVideo.pause(); albumViewer.hidden = true; albumGrid.hidden = false; };
+async function renderPhotos() {
+  let items = [];
+  try {
+    const result = await fetchMedia('photo', pager.photo.offset);
+    items = result.items;
+    pager.photo.hasNext = result.hasNext;
+  } catch {
+    pager.photo.hasNext = false;
+  }
+  photoGallery.innerHTML = '';
+  if (!items.length && pager.photo.offset === 0) {
+    items = [{ url: 'assets/srimaan-shikshak-bhavan.jpg', title: 'श्रीमान शिक्षक भवन' }];
+  }
+  items.forEach((item, index) => photoGallery.append(photoCard(item, index)));
+  for (let index = items.length; index < PAGE_SIZE; index += 1) photoGallery.append(emptyPhoto(index));
+  updatePager('photo');
+}
+
+async function renderVideos() {
+  let items = [];
+  try {
+    const result = await fetchMedia('video', pager.video.offset);
+    items = result.items;
+    pager.video.hasNext = result.hasNext;
+  } catch {
+    pager.video.hasNext = false;
+  }
+  videoGallery.innerHTML = '';
+  items.forEach((item, index) => videoGallery.append(videoCard(item, index)));
+  for (let index = items.length; index < PAGE_SIZE; index += 1) videoGallery.append(emptyVideo(index));
+  updatePager('video');
+}
+
+function page(type, direction) {
+  const state = pager[type];
+  state.offset = Math.max(0, state.offset + direction * PAGE_SIZE);
+  if (type === 'photo') renderPhotos(); else renderVideos();
+}
+
+photoPrevious.onclick = () => page('photo', -1);
+photoNext.onclick = () => page('photo', 1);
+videoPrevious.onclick = () => page('video', -1);
+videoNext.onclick = () => page('video', 1);
+document.querySelectorAll('[data-close-album]').forEach((button) => { button.onclick = closeViewer; });
 viewerMedia.onpointermove = showViewerControls;
 viewerMedia.onclick = (event) => { if (event.target === viewerMedia || event.target === albumVideo) showViewerControls(); };
 viewerBackward.onclick = () => { albumVideo.currentTime = Math.max(0, albumVideo.currentTime - 15); showViewerControls(); };
@@ -230,13 +189,14 @@ viewerMute.onclick = () => { albumVideo.muted = !albumVideo.muted; viewerMute.te
 viewerZoom.onclick = () => { if (document.fullscreenElement) document.exitFullscreen?.(); else viewerMedia.requestFullscreen?.(); showViewerControls(); };
 albumVideo.onplay = () => { viewerToggle.textContent = 'Ⅱ'; showViewerControls(); };
 albumVideo.onpause = () => { viewerToggle.textContent = '▶'; showViewerControls(); };
-document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && !modal.hidden) closeModal(); });
+document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && !modal.hidden) closeViewer(); });
+
 if (explore) explore.onclick = () => document.getElementById(explore.dataset.scrollTo)?.scrollIntoView({ behavior: 'smooth' });
 if (menu) menu.onclick = () => toggleMenu(!drawer.classList.contains('is-open'));
 if (desktopMenu) desktopMenu.onclick = () => toggleMenu(true);
 if (closeMenu) closeMenu.onclick = () => toggleMenu(false);
 navLinks.forEach((link) => { link.onclick = () => toggleMenu(false); });
-const year = document.getElementById('year');
+const year = $('#year');
 if (year) year.textContent = new Date().getFullYear();
-renderVideos();
 renderPhotos();
+renderVideos();

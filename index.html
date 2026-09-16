@@ -76,7 +76,7 @@
           <article class="photo-card photo-card--empty" aria-label="Photograph space 03"><span>03</span><p>छायाचित्र लवकरच</p><i>◇</i></article>
           <article class="photo-card photo-card--empty" aria-label="Photograph space 04"><span>04</span><p>छायाचित्र लवकरच</p><i>◇</i></article>
         </div>
-        <div class="album-action"><span>01 — 04</span><button type="button" data-open-album="photo">संपूर्ण फोटो अल्बम <b>↗</b></button></div>
+        <nav class="grid-pager" aria-label="Photo pages"><button type="button" id="photo-previous" disabled>← मागील</button><span id="photo-page">01 / 01</span><button type="button" id="photo-next">पुढील →</button></nav>
       </section>
 
       <section class="two-photo-page" aria-label="Lodge videos">
@@ -85,7 +85,7 @@
           <p lang="mr">श्रीमान शिक्षक भवनाची<br />क्षणचित्रे</p>
         </div>
         <div class="two-photo-page__grid" id="video-gallery" aria-live="polite"></div>
-        <div class="album-action album-action--light"><span>व्हिडिओ संग्रह</span><button type="button" data-open-album="video">संपूर्ण व्हिडिओ अल्बम <b>↗</b></button></div>
+        <nav class="grid-pager" aria-label="Video pages"><button type="button" id="video-previous" disabled>← मागील</button><span id="video-page">01 / 01</span><button type="button" id="video-next">पुढील →</button></nav>
         <template id="video-card-template">
           <article class="video-card">
             <video playsinline preload="metadata"></video>
@@ -130,13 +130,11 @@
         <a class="enquiries__link" href="mailto:hello@example.com">Begin an enquiry <span>↗</span></a>
       </section>
     </main>
-    <div class="album-modal" id="album-modal" hidden aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="album-title">
+    <div class="album-modal" id="album-modal" hidden aria-hidden="true" role="dialog" aria-modal="true" aria-label="Media viewer">
       <div class="album-modal__backdrop" data-close-album></div>
       <section class="album-modal__panel">
-        <header class="album-modal__header"><p class="section-label" id="album-label">Album</p><h2 id="album-title">अल्बम</h2><button type="button" class="album-modal__close" data-close-album aria-label="Close album">×</button></header>
-        <div class="album-modal__grid" id="album-grid"></div>
-        <div class="album-viewer" id="album-viewer" hidden>
-          <button type="button" class="album-viewer__back" id="album-back">← अल्बमकडे परत</button>
+        <button type="button" class="album-modal__close" data-close-album aria-label="Close viewer">×</button>
+        <div class="album-viewer" id="album-viewer">
           <div class="album-viewer__media" id="album-viewer-media"><img id="album-image" alt="" /><video id="album-video" playsinline></video><div class="viewer-controls" id="viewer-controls"><button type="button" id="viewer-backward" aria-label="Go back 15 seconds">↶<small>15</small></button><button type="button" id="viewer-toggle" aria-label="Play or pause video">▶</button><button type="button" id="viewer-forward" aria-label="Go forward 15 seconds"><small>15</small>↷</button><button type="button" id="viewer-mute" aria-label="Mute video">⌁</button><button type="button" id="viewer-zoom" aria-label="View video fullscreen">⛶</button></div></div>
           <p id="album-caption"></p>
         </div>

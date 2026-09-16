@@ -61,6 +61,13 @@
 @media(max-width:600px){.two-photo-page .video-card{aspect-ratio:9/16!important;min-height:0!important}.two-photo-page .video-card video{height:100%!important;object-fit:cover!important;width:100%!important}}
 .video-card video::-webkit-media-controls{display:none!important}
 
+/* Paged media collections. Four items are replaced in place; there is no album page. */
+.grid-pager{align-items:center;border-top:1px solid rgba(26,28,24,.22);display:flex;justify-content:space-between;margin-top:clamp(28px,4vw,56px);padding-top:17px}.grid-pager button{background:transparent;border:0;color:var(--ink);cursor:pointer;font:14px "Noto Serif Devanagari",Georgia,serif;margin:0;padding:8px 0}.grid-pager button:disabled{cursor:not-allowed;opacity:.28}.grid-pager span{font:10px "DM Mono",monospace;letter-spacing:.12em}.two-photo-page .grid-pager{border-color:rgba(32,59,54,.25)}
+
+/* Final media sizing: two complete vertical phone videos per laptop row, never inside a wide frame. */
+@media(min-width:601px){.two-photo-page .two-photo-page__grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,560px))!important;justify-content:center!important;max-width:1180px!important;margin-left:auto!important;margin-right:auto!important;overflow:visible!important;padding:0!important}.two-photo-page .video-card{aspect-ratio:9 / 16!important;min-height:0!important;min-width:0!important;width:100%!important}.two-photo-page .video-card video{background:#0b1512!important;height:100%!important;object-fit:contain!important;opacity:.82!important;width:100%!important}.two-photo-page .video-card:hover video{opacity:1!important}.two-photo-page .grid-pager{max-width:1180px;margin-left:auto;margin-right:auto}}
+@media(max-width:600px){.two-photo-page .two-photo-page__grid{display:grid!important;grid-template-columns:1fr!important;overflow:visible!important;padding:0!important}.two-photo-page .video-card{aspect-ratio:9 / 16!important;min-height:0!important;width:100%!important}.two-photo-page .video-card video{height:100%!important;object-fit:contain!important;width:100%!important}}
+
 .desktop-nav{display:none}
 @media(min-width:601px){
   .header{display:flex}
