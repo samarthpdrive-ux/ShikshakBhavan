@@ -56,6 +56,11 @@
 @media(min-width:601px){.two-photo-page .two-photo-page__grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.two-photo-page .video-card{aspect-ratio:4/5!important;min-height:clamp(600px,66vw,980px)!important}.two-photo-page .video-card video{object-fit:cover!important}}
 @media(max-width:600px){.two-photo-page .video-card{aspect-ratio:4/5!important;min-height:0!important}}
 
+/* Full-size phone-video grid: each card uses the original 9:16 ratio, so there are no small strips or side bars. */
+@media(min-width:601px){.desktop-nav{position:sticky!important;top:0;z-index:15}.two-photo-page .two-photo-page__grid{align-items:start;grid-template-columns:repeat(2,minmax(0,1fr))!important}.two-photo-page .video-card{aspect-ratio:9/16!important;min-height:0!important;width:100%}.two-photo-page .video-card video{height:100%!important;object-fit:cover!important;opacity:.58!important;width:100%!important}.two-photo-page .video-card:hover video{opacity:.72!important}}
+@media(max-width:600px){.two-photo-page .video-card{aspect-ratio:9/16!important;min-height:0!important}.two-photo-page .video-card video{height:100%!important;object-fit:cover!important;width:100%!important}}
+.video-card video::-webkit-media-controls{display:none!important}
+
 .desktop-nav{display:none}
 @media(min-width:601px){
   .header{display:flex}

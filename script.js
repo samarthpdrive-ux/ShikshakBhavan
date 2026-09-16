@@ -182,6 +182,8 @@ function videoCard(item, index) {
   const seek = card.querySelector('.video-card__seek');
   const fullscreen = card.querySelector('.video-card__fullscreen');
   video.src = item.url;
+  video.controls = false;
+  video.removeAttribute('controls');
   video.muted = true;
   number.textContent = String(index + 1).padStart(2, '0');
   title.textContent = item.title || `व्हिडिओ ${index + 1}`;
