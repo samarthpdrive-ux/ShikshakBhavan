@@ -175,6 +175,7 @@ function placeholder(index) {
 function videoCard(item, index) {
   const card = cardTemplate.content.firstElementChild.cloneNode(true);
   const video = card.querySelector('video');
+  const number = card.querySelector('.video-card__number');
   const title = card.querySelector('.video-card__title');
   const play = card.querySelector('.video-card__play');
   const mute = card.querySelector('.video-card__mute');
@@ -182,16 +183,18 @@ function videoCard(item, index) {
   const fullscreen = card.querySelector('.video-card__fullscreen');
   video.src = item.url;
   video.muted = true;
+  number.textContent = String(index + 1).padStart(2, '0');
   title.textContent = item.title || `व्हिडिओ ${index + 1}`;
-  const playback = () => (video.paused ? video.play().catch(() => {}) : video.pause());
-  play.onclick = playback;
-  video.onclick = playback;
+  const openVideo = () => openViewer({ ...item, type: 'video', title: item.title || `व्हिडिओ ${index + 1}` });
+  card.onclick = openVideo;
+  play.onclick = openVideo;
+  video.onclick = openVideo;
   video.onplay = () => { play.textContent = 'Ⅱ'; };
   video.onpause = () => { play.textContent = '▶'; };
   video.ontimeupdate = () => { seek.value = video.duration ? (video.currentTime / video.duration) * 100 : 0; };
   seek.oninput = () => { if (video.duration) video.currentTime = (seek.value * video.duration) / 100; };
   mute.onclick = () => { video.muted = !video.muted; mute.textContent = video.muted ? '⌁' : '◖))'; };
-  fullscreen.onclick = () => openViewer({ ...item, type: 'video', title: item.title || `व्हिडिओ ${index + 1}` });
+  fullscreen.onclick = (event) => { event.stopPropagation(); openVideo(); };
   return card;
 }
 
