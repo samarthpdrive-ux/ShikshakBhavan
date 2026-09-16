@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600&family=Noto+Serif+Devanagari:wght@400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css?v=20260917-lightbox-1" />
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <main>
@@ -31,7 +31,7 @@
           <a class="desktop-nav__cta" href="#enquiries">चौकशी</a>
         </div>
         <div class="desktop-nav__links">
-          <a href="#residence">आमचा निवास</a><a href="#spaces">सुविधा</a><a href="#residence-showcase">छायाचित्रे</a><a href="#enquiries">चौकशी</a>
+          <a href="#residence">आमचा निवास</a><a href="#spaces">सुविधा</a><a href="#gallery">छायाचित्रे</a><a href="#enquiries">चौकशी</a>
         </div>
       </nav>
 
@@ -40,7 +40,7 @@
         <nav class="drawer__nav" aria-label="Main navigation">
           <a href="#residence">The Residence <span>01</span></a>
           <a href="#spaces">The Spaces <span>02</span></a>
-          <a href="#residence-showcase">Gallery <span>03</span></a>
+          <a href="#gallery">Gallery <span>03</span></a>
           <a href="#enquiries">Enquiries <span>04</span></a>
         </nav>
         <p class="drawer__mark">Shrimaan Shikshak Bhavan</p>
@@ -52,14 +52,11 @@
           <h2 lang="mr">आमचा <em>निवास</em></h2>
           <p class="intro__marathi" lang="mr">श्री स्वामी समर्थ मंदिराच्या दर्शनासाठी येणाऱ्या स्वामी भक्तांसाठी श्रीमान शिक्षक भवन हे शांत, स्वच्छ आणि आरामदायी निवासस्थान आहे. मंदिराच्या मागे, समर्थ विहार, गाणगापूर रोड, अक्कलकोट येथे सुविधाजनक ठिकाणी असलेले हे भवन भक्तांच्या मुक्कामासाठी उत्तम सोय उपलब्ध करून देते.</p>
         </div>
-        <div class="residence-showcase" id="residence-showcase" aria-label="Shrimaan Shikshak Bhavan photograph gallery">
-          <article class="photo-card photo-card--featured" role="button" tabindex="0" data-photo-src="assets/srimaan-shikshak-bhavan.jpg" data-photo-title="श्रीमान शिक्षक भवन">
-            <div class="photo-card__media"><img src="assets/srimaan-shikshak-bhavan.jpg" alt="Shrimaan Shikshak Bhavan exterior" loading="lazy" /></div>
-            <div class="photo-card__overlay"><span>01</span><p>श्रीमान शिक्षक भवन</p><i>⤢</i></div>
-          </article>
-          <article class="photo-card photo-card--empty" aria-label="Photograph space 02"><span>02</span><p>छायाचित्र लवकरच</p><i>◇</i></article>
-          <article class="photo-card photo-card--empty" aria-label="Photograph space 03"><span>03</span><p>छायाचित्र लवकरच</p><i>◇</i></article>
-          <article class="photo-card photo-card--empty" aria-label="Photograph space 04"><span>04</span><p>छायाचित्र लवकरच</p><i>◇</i></article>
+        <div class="intro__placeholders" aria-label="Reserved space for four lodge photographs">
+          <div class="intro__placeholder"><span>01</span></div>
+          <div class="intro__placeholder"><span>02</span></div>
+          <div class="intro__placeholder"><span>03</span></div>
+          <div class="intro__placeholder"><span>04</span></div>
         </div>
       </section>
 
@@ -70,12 +67,16 @@
         </div>
         <div class="two-photo-page__grid" id="video-gallery" aria-live="polite"></div>
         <template id="video-card-template">
-          <article class="video-card" role="button" tabindex="0">
-            <video playsinline preload="metadata" muted loop tabindex="-1"></video>
+          <article class="video-card">
+            <video playsinline preload="metadata"></video>
             <div class="video-card__shade"></div>
-            <span class="video-card__play" aria-hidden="true">▶</span>
-            <span class="video-card__number"></span>
             <p class="video-card__title"></p>
+            <button class="video-card__play" type="button" aria-label="Play video">▶</button>
+            <div class="video-card__controls">
+              <button class="video-card__mute" type="button" aria-label="Mute video">⌁</button>
+              <input class="video-card__seek" type="range" min="0" max="100" value="0" aria-label="Video progress" />
+              <button class="video-card__fullscreen" type="button" aria-label="View fullscreen">⛶</button>
+            </div>
           </article>
         </template>
       </section>
@@ -109,28 +110,6 @@
       </section>
     </main>
     <footer><a href="#top">Shrimaan Shikshak Bhavan</a><span>© <span id="year"></span></span><a href="#top">Back to top ↑</a></footer>
-
-    <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Media viewer">
-      <div class="lightbox__backdrop" data-lightbox-close></div>
-      <button class="lightbox__close" type="button" data-lightbox-close aria-label="Close">×</button>
-      <button class="lightbox__nav lightbox__nav--prev" type="button" data-lightbox-prev aria-label="Previous">‹</button>
-      <button class="lightbox__nav lightbox__nav--next" type="button" data-lightbox-next aria-label="Next">›</button>
-      <div class="lightbox__stage" data-lightbox-stage>
-        <img class="lightbox__image" alt="" />
-        <video class="lightbox__video" playsinline></video>
-      </div>
-      <div class="lightbox__videobar" data-lightbox-videobar hidden>
-        <button type="button" class="lightbox__vbtn" data-lightbox-playpause aria-label="Play or pause">▶</button>
-        <input type="range" class="lightbox__seek" data-lightbox-seek min="0" max="100" value="0" aria-label="Seek" />
-        <button type="button" class="lightbox__vbtn" data-lightbox-mute aria-label="Mute or unmute">⌁</button>
-        <button type="button" class="lightbox__vbtn" data-lightbox-fullscreen aria-label="Toggle fullscreen">⤢</button>
-      </div>
-      <div class="lightbox__meta">
-        <p class="lightbox__title" data-lightbox-title></p>
-        <span class="lightbox__count" data-lightbox-count></span>
-      </div>
-    </div>
-
-    <script src="script.js?v=20260917-lightbox-1"></script>
+    <script src="script.js"></script>
   </body>
 </html>
