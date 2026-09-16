@@ -31,7 +31,7 @@
           <a class="desktop-nav__cta" href="#enquiries">चौकशी</a>
         </div>
         <div class="desktop-nav__links">
-          <a href="#residence">आमचा निवास</a><a href="#spaces">सुविधा</a><a href="#gallery">छायाचित्रे</a><a href="#enquiries">चौकशी</a>
+          <a href="#residence">आमचा निवास</a><a href="#spaces">सुविधा</a><a href="#residence-showcase">छायाचित्रे</a><a href="#enquiries">चौकशी</a>
         </div>
       </nav>
 
@@ -40,7 +40,7 @@
         <nav class="drawer__nav" aria-label="Main navigation">
           <a href="#residence">The Residence <span>01</span></a>
           <a href="#spaces">The Spaces <span>02</span></a>
-          <a href="#gallery">Gallery <span>03</span></a>
+          <a href="#residence-showcase">Gallery <span>03</span></a>
           <a href="#enquiries">Enquiries <span>04</span></a>
         </nav>
         <p class="drawer__mark">Shrimaan Shikshak Bhavan</p>
@@ -52,12 +52,16 @@
           <h2 lang="mr">आमचा <em>निवास</em></h2>
           <p class="intro__marathi" lang="mr">श्री स्वामी समर्थ मंदिराच्या दर्शनासाठी येणाऱ्या स्वामी भक्तांसाठी श्रीमान शिक्षक भवन हे शांत, स्वच्छ आणि आरामदायी निवासस्थान आहे. मंदिराच्या मागे, समर्थ विहार, गाणगापूर रोड, अक्कलकोट येथे सुविधाजनक ठिकाणी असलेले हे भवन भक्तांच्या मुक्कामासाठी उत्तम सोय उपलब्ध करून देते.</p>
         </div>
-        <div class="intro__placeholders" aria-label="Reserved space for four lodge photographs">
-          <div class="intro__placeholder"><span>01</span></div>
-          <div class="intro__placeholder"><span>02</span></div>
-          <div class="intro__placeholder"><span>03</span></div>
-          <div class="intro__placeholder"><span>04</span></div>
+        <div class="residence-showcase" id="residence-showcase" aria-label="Shrimaan Shikshak Bhavan photograph gallery">
+          <article class="photo-card photo-card--featured" role="button" tabindex="0" data-photo-src="assets/srimaan-shikshak-bhavan.jpg" data-photo-title="श्रीमान शिक्षक भवन">
+            <div class="photo-card__media"><img src="assets/srimaan-shikshak-bhavan.jpg" alt="Shrimaan Shikshak Bhavan exterior" loading="lazy" /></div>
+            <div class="photo-card__overlay"><span>01</span><p>श्रीमान शिक्षक भवन</p><i>↗</i></div>
+          </article>
+          <article class="photo-card photo-card--empty" aria-label="Photograph space 02"><span>02</span><p>छायाचित्र लवकरच</p><i>◇</i></article>
+          <article class="photo-card photo-card--empty" aria-label="Photograph space 03"><span>03</span><p>छायाचित्र लवकरच</p><i>◇</i></article>
+          <article class="photo-card photo-card--empty" aria-label="Photograph space 04"><span>04</span><p>छायाचित्र लवकरच</p><i>◇</i></article>
         </div>
+        <div class="album-action"><span>01 — 04</span><button type="button" data-open-album="photo">संपूर्ण फोटो अल्बम <b>↗</b></button></div>
       </section>
 
       <section class="two-photo-page" aria-label="Lodge videos">
@@ -66,6 +70,7 @@
           <p lang="mr">श्रीमान शिक्षक भवनाची<br />क्षणचित्रे</p>
         </div>
         <div class="two-photo-page__grid" id="video-gallery" aria-live="polite"></div>
+        <div class="album-action album-action--light"><span>व्हिडिओ संग्रह</span><button type="button" data-open-album="video">संपूर्ण व्हिडिओ अल्बम <b>↗</b></button></div>
         <template id="video-card-template">
           <article class="video-card">
             <video playsinline preload="metadata"></video>
@@ -109,6 +114,18 @@
         <a class="enquiries__link" href="mailto:hello@example.com">Begin an enquiry <span>↗</span></a>
       </section>
     </main>
+    <div class="album-modal" id="album-modal" hidden aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="album-title">
+      <div class="album-modal__backdrop" data-close-album></div>
+      <section class="album-modal__panel">
+        <header class="album-modal__header"><p class="section-label" id="album-label">Album</p><h2 id="album-title">अल्बम</h2><button type="button" class="album-modal__close" data-close-album aria-label="Close album">×</button></header>
+        <div class="album-modal__grid" id="album-grid"></div>
+        <div class="album-viewer" id="album-viewer" hidden>
+          <button type="button" class="album-viewer__back" id="album-back">← अल्बमकडे परत</button>
+          <div class="album-viewer__media"><img id="album-image" alt="" /><video id="album-video" controls playsinline></video></div>
+          <p id="album-caption"></p>
+        </div>
+      </section>
+    </div>
     <footer><a href="#top">Shrimaan Shikshak Bhavan</a><span>© <span id="year"></span></span><a href="#top">Back to top ↑</a></footer>
     <script src="script.js"></script>
   </body>

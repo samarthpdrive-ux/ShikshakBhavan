@@ -4,7 +4,7 @@ import time
 from pathlib import Path
 
 from cryptography.fernet import Fernet
-from fastapi import Depends, FastAPI, Header, HTTPException, Request
+from fastapi import Depends, FastAPI, Header, HTTPException, Query, Request
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
@@ -85,8 +85,11 @@ app = FastAPI(title='Shrimaan Shikshak Bhavan')
 def create_tables(): Base.metadata.create_all(engine)
 
 @app.get('/api/videos')
-def public_videos(db: Session = Depends(get_db)):
-    return [video_view(video) for video in db.query(Video).filter(Video.is_published.is_(True)).order_by(Video.position, Video.created_at).limit(4).all()]
+def public_videos(limit: int | None = Query(default=None, ge=1, le=100), db: Session = Depends(get_db)):
+    query = db.query(Video).filter(Video.is_published.is_(True)).order_by(Video.position, Video.created_at)
+    if limit:
+        query = query.limit(limit)
+    return [video_view(video) for video in query.all()]
 
 @app.post('/api/admin/verify')
 def verify_admin(_: None = Depends(admin_auth)): return {'ok': True}
@@ -125,7 +128,6 @@ def admin_videos(_: None = Depends(admin_auth), db: Session = Depends(get_db)):
 @app.post('/api/admin/videos', status_code=201)
 def create_video(payload: VideoInput, _: None = Depends(admin_auth), db: Session = Depends(get_db)):
     if not db.get(CloudinaryAccount, payload.account_id): raise HTTPException(404, 'Cloudinary account not found.')
-    if db.query(Video).filter_by(is_published=True).count() >= 4: raise HTTPException(409, 'Only four published videos are supported.')
     video = Video(id=secrets.token_hex(16), account_id=payload.account_id, title=payload.title, category=payload.category, description=payload.description, secure_url=payload.secure_url, public_id=payload.public_id, position=db.query(Video).count())
     db.add(video); db.commit(); return video_view(video)
 
